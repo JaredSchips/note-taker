@@ -33,4 +33,17 @@ api.post('/notes', (req, res) => {
     res.status(200).json(body)
 })
 
+api.delete('/notes/:id', (req, res) => {
+    const id = req.params.id
+    readFromFile('./db/db.json').then(db => {
+        db = JSON.parse(db)
+
+        const dbFiltered = db.filter(note => note.id!==id)
+        if (db.length === dbFiltered.length) {
+            return res.status(404).send(`Note with ID ${id} was not found`)
+        }
+        
+        writeToFile('./db/db.json', dbFiltered, `\nData deleted from ./db/db.json`)})
+})
+
 module.exports = api
